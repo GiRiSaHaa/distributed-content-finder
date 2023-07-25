@@ -36,7 +36,7 @@ public class NetworkManager {
         this.BOOTSTRAP_SERVER_IP = InetAddress.getByName(BOOTSTRAP_SERVER_IP_STR);
         this.IP_ADDRESS = findIP(ip);
         this.PORT = new Random().nextInt(10000) + 1200; // ports above 1200
-        this.USER_NAME = "Altumtek";
+        this.USER_NAME = "TheSquad";
         this.networkManagerSocket = new DatagramSocket(this.PORT);
 //        this.sendMessages = new ConcurrentHashMap<>();
 //        this.receiveMessages = new ConcurrentHashMap<>();
