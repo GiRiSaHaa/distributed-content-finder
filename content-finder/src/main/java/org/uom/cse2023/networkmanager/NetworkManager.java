@@ -42,9 +42,29 @@ public class NetworkManager {
 //        this.receiveMessages = new ConcurrentHashMap<>();
     }
 
+    private NetworkManager(String ip, String name) throws UnknownHostException, SocketException {
+        this.BOOTSTRAP_SERVER_IP = InetAddress.getByName(BOOTSTRAP_SERVER_IP_STR);
+        this.IP_ADDRESS = findIP(ip);
+        this.PORT = new Random().nextInt(10000) + 1200; // ports above 1200
+        this.USER_NAME = name;
+        this.networkManagerSocket = new DatagramSocket(this.PORT);
+//        this.sendMessages = new ConcurrentHashMap<>();
+//        this.receiveMessages = new ConcurrentHashMap<>();
+    }
+
     public static NetworkManager getInstance(String ip) {
         try {
             networkManager = new NetworkManager(ip);
+            return networkManager;
+        } catch (UnknownHostException | SocketException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static NetworkManager getInstance(String ip, String name) {
+        try {
+            networkManager = new NetworkManager(ip, name);
             return networkManager;
         } catch (UnknownHostException | SocketException e) {
             e.printStackTrace();

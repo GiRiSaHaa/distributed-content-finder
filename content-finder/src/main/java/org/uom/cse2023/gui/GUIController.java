@@ -25,6 +25,8 @@ import java.util.ResourceBundle;
 public class GUIController implements Initializable, IContentSearch {
 
     @FXML
+    public Button joinButton;
+    @FXML
     private TextArea runningLog;
 
     @FXML
@@ -52,10 +54,13 @@ public class GUIController implements Initializable, IContentSearch {
     private ListView<String> myFilesList;
 
     @FXML
-    private Button setIP;
+    private Button join;
 
     @FXML
     private TextField ipInput;
+
+    @FXML
+    private TextField nameInput;
 
     @FXML
     private Label ipPortOutput;
@@ -68,14 +73,14 @@ public class GUIController implements Initializable, IContentSearch {
     @FXML
     void search(ActionEvent event) {
 
-        System.out.println("Search for");
+        System.out.print("Searching for : ");
         String search = searchInput.getText();
         System.out.println(search);
         NetworkManager.getInstance().search(search, GUIController.this);
 
-        if (receivedFileList != null){
-            receivedFileList.clear();
-        }
+//        if (receivedFileList != null){
+//            receivedFileList.clear();
+//        }
         updateSearchResults();
     }
 
@@ -83,22 +88,13 @@ public class GUIController implements Initializable, IContentSearch {
     void showNeighbours(ActionEvent event) {
         ObservableList<String> items = FXCollections.observableArrayList();
         int count = 1;
+        items.add("#    IP Address          PORT" );
         for (RouteTable.Node node: NetworkManager.getInstance().getRouteTable().getNeighbourList()){
-            items.add(count + " " + node.getIp().getHostAddress() + " " + node.getPort());
+            items.add(count + "     " + node.getIp().getHostAddress() + "            " + node.getPort());
             count++;
         }
 
         neighboursList.setItems(items);
-    }
-
-    @FXML
-    void showFiles(ActionEvent event){
-        ObservableList<String> files = FXCollections.observableArrayList();
-        for (String file : FileManager.getIntance().getMyFiles()) {
-            files.add(file);
-        }
-
-        myFilesList.setItems(files);
     }
 
     @FXML
@@ -108,15 +104,12 @@ public class GUIController implements Initializable, IContentSearch {
     }
 
     @FXML
-    void setIP(ActionEvent event){
-        String IP = ipInput.getText();
+    void join(ActionEvent event){
+        NetworkManager.getInstance(ipInput.getText(), nameInput.getText()).start();
 
-        NetworkManager.getInstance(IP).start();
+        ipPortOutput.setText("Connected : " + NetworkManager.getInstance().getIpPort());
 
-        ipPortOutput.setText(NetworkManager.getInstance().getIpPort());
-
-        setIP.setDisable(true);
-        showFilesButton.setDisable(false);
+        join.setDisable(true);
         showNeighboursButton.setDisable(false);
         searchButton.setDisable(false);
 
@@ -135,16 +128,20 @@ public class GUIController implements Initializable, IContentSearch {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        showFilesButton.setDisable(true);
         showNeighboursButton.setDisable(true);
         searchButton.setDisable(true);
         downloadButton.setDisable(true);
+
+        ObservableList<String> files = FXCollections.observableArrayList();
+        files.addAll(FileManager.getIntance().getMyFiles());
+
+        myFilesList.setItems(files);
     }
 
     @Override
     public void onSearchResults(InetAddress ownerAddress, int port, List<String> files) {
 
-        System.out.println("Files received");
+        System.out.println("Content Received");
         for (String file : files) {
             System.out.println(file + " ---- " + port);
             receivedFileList.put(file, ownerAddress + " " + port);

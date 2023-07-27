@@ -24,12 +24,8 @@ public class GUI extends Application {
 
         Scene scene = new Scene(root);
 
-//        PrintStream ps = new PrintStream( taos );
-//        System.setOut( ps );
-//        System.setErr( ps );
-
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Distributed Search App");
+        primaryStage.setTitle("Distributed Content Finder App");
         primaryStage.show();
 
         primaryStage.setOnCloseRequest(event -> {
